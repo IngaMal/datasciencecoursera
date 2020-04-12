@@ -13,6 +13,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Заметки по курсу 
 
+## GitHub
+
+Обновление локальной рабочей директории с git:
+
+1. Заходим в рабочую директорию: cd D:/Coursera/R/datasciencecoursera
+2. Проверяем на основную (master): git checkout master
+3. Обновляем: git pull
+4. Выходим: exit
+
+
 ## Week 1. Background, Getting Started, and Nuts & Bolts
 
 Проверка рабочей директории:
@@ -20,3 +30,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 getwd()
 ```
+Файлы в рабочей директории:
+
+```{r}
+dir()
+```
+
