@@ -1,0 +1,22 @@
+---
+title: "R course (Coursera)"
+author: "IngaMal"
+date: \today
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Programming
+
+Заметки по курсу 
+
+## Week 1. Background, Getting Started, and Nuts & Bolts
+
+Проверка рабочей директории:
+
+```{r}
+getwd()
+```
