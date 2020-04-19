@@ -44,3 +44,145 @@ y <- 1:50
 y
 ```
 
+**Objects**: basic classes:
+
+0. character
+0. numeric (real numbers, т.е. double precision real numbers)
+0. integer (добавление метки L при создании, к примеру '1L')
+0. complex
+0. logical (True/False)
+
+Базовый объект *вектор (vector)* состоит из объектов одного типа (инача только *список (list)*). Пустой вектор может быть создан функцией vector().
+
+Специальные объекты:
+
+ - *Inf* - бесконечность или 1/0. Значением 1/Inf будет 0.
+ - *NaN* - отсутствующее значение или неопределенное значение (0 / 0). NaN - неопределенное математически выражение, NA - всё остальное
+```{r}
+1
+1L
+1/0
+1/Inf
+0/0
+#Test Nan/NA
+x <- c(1, 2, NaN, NA, 4)
+is.na(x)#показывает NA и NaN
+is.nan(x)#показывает только NaN
+```
+ 
+ Объекты могут иметь *attributes* (атрибуты), такие как имя, длина, размерность (к примеру матрица, массив) и другие. Функция attributes().
+ 
+ Несколько примеров:
+```{r}
+x <- c(0.5, 0.6)       ## numeric
+x <- c(TRUE, FALSE)    ## logical
+x <- c(T, F)           ## logical
+x <- c("a", "b", "c")  ## character
+x <- 9:29             ## integer
+x <- c(1+0i, 2+4i)     ## complex
+x <- vector("numeric", length = 10)##using vector() function
+x
+```
+ 
+ При попытке объединить объекты разных типов в вектор наступает *coercion*, которую можно решить используя функции типа *as.type()*:
+```{r}
+y <- c(1.7, "a")
+class(y)
+x <- 5:9
+class(x)
+as.numeric(x)
+as.logical(x)
+```
+ 
+ List:
+```{r}
+x <- list(1, "a", TRUE, 1 + 4i) 
+x
+```
+ 
+ Матрица -- вектор с атрибутом размерности. The dimension attribute is itself an integer vector oflength 2 (nrow, ncol). Заполнение поколоночное, начиная с левого верхнего угла
+```{r}
+m <- matrix(nrow = 2, ncol = 3)
+m
+dim(m)
+attributes(m)
+#Create new matrix
+m <- matrix(1:6, nrow = 2, ncol = 3) #заполнение матрицы
+m
+```
+ Также можно создать сначала вектор, а потом добавить атрибут:
+```{r}
+m <- 1:20
+m
+dim(m) <- c(4, 5)
+m
+```
+ Рассмотрим также слияние матриц колонками (cbind) и строками (rbind):
+```{r}
+x <- 1:3
+y <- 10:12
+cbind(x, y)
+rbind(x, y)
+```
+ 
+ **Factors** используют для категориальных данных, которые могут быть упорядоченными или нет:
+```{r}
+x <- factor(c("yes", "yes", "no", "yes", "no")) 
+x
+table(x)
+unclass(x)
+attr(x,"levels")
+y <- factor(c("yes", "yes", "no", "yes", "no"),              
+            levels = c("yes", "no"))
+y
+```
+ 
+ *Таблица данных*. Каждая колонна - вектор:
+```{r}
+x <- data.frame(foo = 1:4, bar = c(T, T, F, F)) 
+nrow(x)
+ncol(x)
+
+```
+ 
+ *Имена*
+```{r}
+x <- 1:3
+names(x)
+names(x) <- c("foo", "bar", "norf") 
+x
+names(x)
+
+m <- matrix(1:4, nrow = 2, ncol = 2)
+dimnames(m) <- list(c("a", "b"), c("c", "d"))
+m
+```
+ 
+### Test
+```{r}
+dat <- read.csv(file = "hw1_data.csv", header = TRUE)
+
+#11. In the dataset provided for this Quiz, what are the column names of the dataset
+names(dat)
+#12. Extract the first 2 rows of the data frame and print them to the console. What does the output look like?
+head(data, 2)
+#13. How many observations (i.e. rows) are in this data frame?
+nrow(dat)
+#14. Extract the last 2 rows of the data frame and print them to the console. What does the output look like?
+dat[152:153,] ##or tail(dat)
+#15. What is the value of Ozone in the 47th row?
+dat[47,1]
+#16. How many missing values are in the Ozone column of this data frame?
+table(is.na(dat[,1]))
+#17. What is the mean of the Ozone column in this dataset? Exclude missing values (coded as NA) from this calculation.
+good <- complete.cases(dat)
+mean(dat[good, ][,1])
+#18. Extract the subset of rows of the data frame where Ozone values are above 31 and Temp values are above 90. What is the mean of Solar.R in this subset?
+mean(subset(dat, Ozone > 31 & Temp > 90)$Solar.R)
+#19. What is the mean of "Temp" when "Month" is equal to 6? 
+mean(subset(dat, Month == 6)$Temp)
+#20. What was the maximum ozone value in the month of May (i.e. Month is equal to 5)?
+max(subset(dat, Month == 5)$Ozone, na.rm = TRUE)
+```
+ 
+ 
