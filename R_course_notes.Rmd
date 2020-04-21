@@ -185,4 +185,11 @@ mean(subset(dat, Month == 6)$Temp)
 max(subset(dat, Month == 5)$Ozone, na.rm = TRUE)
 ```
  
- 
+### Practical R Exercises in swirl Part 1
+```{r}
+#install.packages("swirl")
+library(swirl)
+install_from_swirl("R Programming")
+swirl()
+```
+
