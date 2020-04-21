@@ -187,9 +187,113 @@ max(subset(dat, Month == 5)$Ozone, na.rm = TRUE)
  
 ### Practical R Exercises in swirl Part 1
 ```{r}
+#Вызов тестовых заданий
 #install.packages("swirl")
 library(swirl)
 install_from_swirl("R Programming")
 swirl()
 ```
 
+## Week 2. Programming with R
+
+Распространённые структуры:
+
+0. **if, else**: testing a condition
+0. **for**: execute a loop a fixed number of times
+0. ***while**: execute a loop while a condition is true
+0. **repeat**: execute an infinite loop
+0. **break**: break the execution of a loop
+0. **next**: skip an interation of a loop
+0. **return**: exit a function
+
+Конструкция *if else*:
+if(<condition>) {
+        ## do something
+} else {
+        ## do something else
+}
+Можно и так:
+```{r}
+x <- 4
+y <- if(x > 3) {10} else { 0 }
+y
+x <- 1
+y <- if(x > 3) {10} else { 0 }
+y
+```
+
+Конструкция *for*:
+```{r}
+for (i in 1:10){
+        print(i)
+}
+#same behaviour
+x <- c("a", "b", "c", "d")
+for(i in seq_along(x)) {
+        print(x[i])
+}
+for(letter in x) {
+        print(letter)
+}
+for(i in 1:4) print(x[i])
+```
+
+Конструкция *while*. Опасность зацикливания.
+```{r}
+count <- 0
+while(count < 10) {
+        print(count)
+        count <- count + 1
+}
+```
+*Random walk*:
+```{r}
+z <- 5
+while(z >= 3 && z <= 10) {
+        print(z)
+        coin <- rbinom(1, 1, 0.5)
+        if(coin == 1) {  ## random walk
+                z <- z + 1        
+        } else {
+                z <- z - 1        
+        } 
+}
+```
+Конструкции *repeat* и *break*. Опасность зацикливания.
+```{r}
+x0 <- 1
+tol <- 1e-8
+repeat {
+        x1 <- x0 - tol/2 * rbinom(1, 1, 0.5)
+        if(abs(x1 - x0) < tol) {
+                break
+        } else {
+                x0 <- x1
+        } 
+}
+```
+Конструкция *next* используется для пропуска итерации в цикле, **return* сигнализирует о выходе из функции и возвращении значения.
+
+
+*Function*
+```{r}
+add2 <- function(x,y){
+        x+y
+}
+above <- function(x, n = 10){#defold number n = 10
+        x[x>n]
+}
+column_mean <- function(data_frame, removeNA = TRUE){
+        nc <- ncol(data_frame)
+        means <- numeric(nc)
+        for (i in 1:nc){
+                means[i] <- mean(data_frame[,i], na.rm = removeNA)
+        }
+        means #return last expression of the function
+}
+# "..." argument is often used when extending another function and you don’t want to copy the entire argumentlist of the original function
+# One  catch  with  ...  is  that  any  arguments  that  appear after  ...  on  the  argument  list  must  be  namedexplicitly and cannot be partially matched.
+myplot <- function(x, y, type = "l", ...) {
+        plot(x, y, type = type, ...)
+        }
+```
