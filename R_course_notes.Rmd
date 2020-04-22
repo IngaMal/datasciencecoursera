@@ -297,3 +297,72 @@ myplot <- function(x, y, type = "l", ...) {
         plot(x, y, type = type, ...)
         }
 ```
+
+### Practica R
+```{r}
+#Напишите функцию с именем «pollutantmean», которая вычисляет среднее значение 
+#загрязнителя (сульфат или нитрат) по указанному списку наблюдений.
+#Функция 'pollutantmean' принимает три аргумента: 'directory', 'pollutant' и 'id'.
+#Учитывая идентификационные номера векторных наблюдений, 'pollutantmean' 
+#считывает данные мониторинга твердых частиц из каталога, указанного в аргументе 'directory',
+#и возвращает среднее значение загрязняющего вещества по всем наблюдениям, 
+#игнорируя все пропущенные значения, закодированные как NA.
+
+pollutantmean <- function(directory, pollutant, id = 1:332){
+  files <- list.files(directory, pattern = ".csv", full.names = TRUE) #все файлы в директории
+  mydata <- data.frame()#пустая таблица
+
+  for(i in id){
+    temp <- read.csv(files[i], header = TRUE)#выбираем интересующие данные
+    mydata <- rbind(mydata, temp)#добавляем в таблицу
+  }
+
+  mean(mydata[, pollutant], na.rm = TRUE)#среднее без пропущенных значений
+}
+```
+
+```{r}
+# Write a function that reads a directory full of files and reports the number of 
+# completely observed cases in each data file. The function should return a data frame 
+# where the first column is the name of the file and the second column is the number 
+# of complete cases.
+
+complete <- function(directory, id = 1:332){
+  files <- list.files(directory, pattern = ".csv", full.names = TRUE) #все файлы в директории
+  mydata <- data.frame()#пустая таблица
+  
+  for(i in id){
+    temp <- read.csv(files[i], header = TRUE)#выбираем интересующую таблицу
+    sm <- sum(!is.na(temp$sulfate)&!is.na(temp$nitrate))
+    temp <- c(i, sm)
+    
+    mydata <- rbind(mydata, temp)#добавляем в таблицу
+  }
+  names(mydata) <- c("id", "nobs")#добавляем имена столбцов
+  mydata
+}
+```
+
+```{r}
+# Напишите функцию, которая берет каталог файлов данных и пороговое значение для завершенных 
+# наблюдений и вычисляет корреляцию между сульфатом и нитратом для местоположений наблюдения,
+# где число полностью наблюдаемых наблюдений (по всем переменным) превышает пороговое значение.
+# Функция должна возвращать вектор корреляций для наблюдений, которые удовлетворяют пороговому
+# требованию. Если ни одно из наблюдений не удовлетворяет пороговому требованию, то 
+# функция должна возвращать числовой вектор длины 0.
+
+corr <- function(directory, threshold = 0){
+  files <- list.files(directory, pattern = ".csv", full.names = TRUE) #все файлы в директории
+  levels <- complete(directory)$nobs  #все пороги
+  myvector <- vector(mode = "numeric")#пустой вектор
+  
+  for(i in 1:length(files)){
+    if (levels[i] > threshold){
+      temp <- read.csv(files[i], header = TRUE) #выбираем интересующую таблицу
+      myvector <- c(myvector, cor(temp$sulfate, temp$nitrate,use="na.or.complete"))
+    }
+  }
+  myvector
+}
+```
+
