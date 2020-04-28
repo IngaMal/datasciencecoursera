@@ -191,7 +191,7 @@ max(subset(dat, Month == 5)$Ozone, na.rm = TRUE)
 #install.packages("swirl")
 library(swirl)
 install_from_swirl("R Programming")
-swirl()
+#swirl()
 ```
 
 ## Week 2. Programming with R
@@ -364,5 +364,96 @@ corr <- function(directory, threshold = 0){
   }
   myvector
 }
+```
+
+## Week 3. Loop Functions and Debugging
+
+ - *lapply*: Loop over a list and evaluate a function on each element
+ - *sapply*: Same as lapply but try to simplify the result
+ - *apply*: Apply a function over the margins of an array
+ - *tapply*: Apply a function over subsets of a vector
+ - *mapply*: Multivariate version of lapply
+ 
+```{r}
+x <- list(a = 1:6, b = rnorm(10))
+lapply(x, mean) #считает среднее для каждого элемента из листа x
+?runif#The Uniform Distribution
+
+tabl <- list(a = matrix(1:4, 2, 2), b = matrix(1:6, 3, 2)) 
+tabl
+lapply(tabl, function(elt) elt[,1])
+```
+Отличия *saplly* от *lapply*:
+- If the result is a list where every element is length 1, then a vector is returned.
+- If the result is a list where every element is a vector of the same length (> 1), a matrix is returned.
+- If it can’t figure things out, a list is returned
+```{r}
+x <- list(a = 1:4, b = rnorm(10), c = rnorm(20, 1), d = rnorm(100, 5))
+lapply(x, mean)
+sapply(x, mean) 
+mean(x)
+```
+
+```{r}
+x <- matrix(rnorm(200), 20, 10)#20 строк, 10 матриц
+head(x)
+apply(x, 2, mean)#среднее по каждой колонне
+apply(x, 1, sum)#сумма по каждой строке
+```
+- *rowSums* = apply(x, 1, sum)
+- *rowMeans* = apply(x, 1, mean)
+- *colSums* = apply(x, 2, sum)
+- *colMeans* = apply(x, 2, mean)
+
+```{r}
+a <- array(rnorm(2 * 2 * 10), c(2, 2, 10))
+apply(a, c(1, 2), mean)
+rowMeans(a, dims = 2)#equivivalent
+```
+```{r}
+list(rep(1, 4), rep(2, 3), rep(3, 2), rep(4, 1))#rep(1,4) - повторить '1' 4 раза
+mapply(rep, 1:4, 4:1)
+```
+
+```{r}
+x <- c(rnorm(10), runif(10), rnorm(10, 1))
+f <- gl(3, 10)#10 единиц, 10 двоек, 10 троек
+tapply(x, f, mean)
+tapply(x, f, mean, simplify = FALSE)
+tapply(x, f, range)
+```
+
+*split*  takes  a  vector  or  other  objects  and  splits  it  into  groups determined  by  a  factor  or  list  of factors
+
+**Debugging Tools**:
+The primary tools for debugging functions in R are
+- *traceback*: prints out the function call stack after an error occurs; does nothing if there’s no error
+- *debug*: flags a function for “debug” mode which allows you to step through execution of a function one line at a time
+- **browser*:  suspends  the  execution  of  a  function  wherever  it  is  called  and  puts  the  function  indebug mode
+- *trace*: allows you to insert debugging code into a function a specific places
+- *recover*: allows you to modify the error behavior so that you can browse the function call stack
+
+### Test
+```{r}
+#1. In this dataset, what is the mean of 'Sepal.Length' for the species virginica? Please round your answer to the nearest whole number.
+library(datasets)
+data(iris)
+s <- split(iris, iris$Species)
+sapply(s$virginica, mean)
+round(sapply(s$virginica, mean))
+
+#2. Continuing with the 'iris' dataset from the previous Question, what R code returns a vector of the means of the variables 'Sepal.Length', 'Sepal.Width', 'Petal.Length', and 'Petal.Width'?
+apply(iris[, 1:4], 2, mean)
+
+#3. How can one calculate the average miles per gallon (mpg) by number of cylinders in the car (cyl)?
+library(datasets)
+data(mtcars)
+tapply(mtcars$mpg, mtcars$cyl, mean)
+with(mtcars, tapply(mpg, cyl , mean))
+sapply(split(mtcars$mpg, mtcars$cyl), mean)
+
+#4. Continuing with the 'mtcars' dataset from the previous Question, what is the absolute difference between the average horsepower(hp) of 4-cylinder cars and the average horsepower of 8-cylinder cars?
+t <- tapply(mtcars$hp, mtcars$cyl, mean)
+round(t[3] - t[1])
 ```
 
